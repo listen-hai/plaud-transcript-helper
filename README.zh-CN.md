@@ -2,6 +2,10 @@
 
 [English](README.md) · 中文
 
+[![一键安装](https://img.shields.io/badge/%E4%B8%80%E9%94%AE%E5%AE%89%E8%A3%85-Tampermonkey-1e4f99?style=for-the-badge&logo=tampermonkey&logoColor=white)](https://github.com/listen-hai/plaud-transcript-helper/releases/latest/download/plaud-transcript-helper.user.js)
+
+> 一键安装需要先装好 [Tampermonkey](https://www.tampermonkey.net/) 并打开“允许用户脚本”（见下方[安装](#安装)）。点按钮后，在 Tampermonkey 页面点“安装”。
+
 版本：1.0.0（正式版），11/5/2026。界面支持中文和英文：默认跟随浏览器语言，面板右上角按钮可切换，选择会被记住。
 
 脚本文件：`plaud-transcript-helper.user.js`。

@@ -2,6 +2,10 @@
 
 English · [中文](README.zh-CN.md)
 
+[![Install / 一键安装](https://img.shields.io/badge/Install-One%20click-1e4f99?style=for-the-badge&logo=tampermonkey&logoColor=white)](https://github.com/listen-hai/plaud-transcript-helper/releases/latest/download/plaud-transcript-helper.user.js)
+
+> One-click install needs [Tampermonkey](https://www.tampermonkey.net/) with **Allow User Scripts** turned on (see [Install](#install)). Click the button, then **Install** on the Tampermonkey page.
+
 A Tampermonkey userscript for editing transcripts on [web.plaud.ai](https://web.plaud.ai): pinned per-segment edit buttons, find & replace with per-segment preview, bulk whole-sentence rewrites, serial saves through Plaud's own editor, post-reload verification, and restore of the last batch.
 
 Version 1.0.0. The UI is available in **English and Chinese** — it follows your browser language, and the button in the panel's top-right corner switches and remembers it.
