@@ -1,0 +1,68 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Plaud Helper — Local Test Fixture</title>
+<style>
+  body {font:16px system-ui;background:#f4f7fb;margin:24px;color:#263648}
+  .scroll-wrapper {height:380px;overflow:auto;border:1px solid #bbc8db;background:white;max-width:680px}
+  .stage {position:relative;height:9600px}
+  .transcribe-item {position:absolute;left:0;right:0;height:160px;padding:16px;box-sizing:border-box;border-bottom:1px solid #dde3ed}
+  .item-header {display:flex;justify-content:space-between}
+  .item-header-right {opacity:0}
+  .transcribe-item:hover .item-header-right {opacity:1}
+  .item-header-right span {cursor:pointer}
+  .timestamp {margin-right:12px}
+  .item-content {padding-top:14px}
+  textarea.edit-textarea {width:95%;height:75px}
+</style>
+<h1>转录编辑助手 · 本地测试</h1>
+<p>60 个模拟段落；滚动时只渲染附近段落。此页不是 Plaud，内容为测试样本。</p>
+<button id="conflict">模拟第 1 段被另一处修改</button>
+<p id="saves">本次加载保存次数：0</p>
+<div class="scroll-wrapper"><div class="stage"></div></div>
+<script>
+  // Test-only storage shims. They are NOT part of the userscript.
+  window.GM_getValue = (k,d) => JSON.parse(localStorage.getItem('test:'+k) || 'null') ?? d;
+  window.GM_setValue = (k,v) => localStorage.setItem('test:'+k,JSON.stringify(v));
+  window.GM_deleteValue = k => localStorage.removeItem('test:'+k);
+  let rows = JSON.parse(localStorage.getItem('fixture-rows') || 'null') ||
+    Array.from({length:60},(_,i)=>({index:i,time:`00:${String(i).padStart(2,'0')}:00`,
+      speaker:i%2?'Speaker B':'Speaker A',
+      text:i%5===0?`Celery queue example ${i+1}.`:`Ordinary sentence ${i+1}.`}));
+  const viewport=document.querySelector('.scroll-wrapper'),stage=document.querySelector('.stage');
+  let editing=null,saves=0;
+  function draw() {
+    if(editing)return;
+    const first=Math.max(0,Math.floor(viewport.scrollTop/160)-2);
+    const last=Math.min(60,first+9);
+    stage.replaceChildren();
+    rows.slice(first,last).forEach(row=>{
+      const el=document.createElement('div');el.className='transcribe-item';el.style.top=`${row.index*160}px`;
+      el.innerHTML=`<div class="item-header"><div class="item-header-left"><span class="timestamp"></span><span class="speaker-name"></span></div><div class="item-header-right"><span><svg width="20" height="20"><use xlink:href="#svg-icon_rename"></use><text x="0" y="16">✎</text></svg></span></div></div><div class="item-content"><span class="transcript-item" data-transcript-index="${row.index}"></span></div>`;
+      el.querySelector('.timestamp').textContent=row.time;
+      el.querySelector('.speaker-name').textContent=row.speaker;
+      el.querySelector('.transcript-item').textContent=row.text;
+      el.querySelector('.item-header-right span').onclick=event=>{
+        event.stopPropagation();if(editing)return;
+        const area=document.createElement('textarea');area.className='edit-textarea';area.value=row.text;
+        el.querySelector('.item-content').replaceChildren(area);editing={row,area};
+        area.focus();
+      };
+      stage.append(el);
+    });
+  }
+  document.addEventListener('click',event=>{
+    if(!editing||event.composedPath().includes(editing.area))return;
+    editing.row.text=editing.area.value;editing=null;
+    localStorage.setItem('fixture-rows',JSON.stringify(rows));
+    saves++;document.querySelector('#saves').textContent=`本次加载保存次数：${saves}`;
+    draw();
+  });
+  viewport.addEventListener('scroll',draw);
+  document.querySelector('#conflict').onclick=()=>{
+    rows[0].text='Changed elsewhere; do not overwrite.';
+    document.querySelector('#conflict').textContent='第 1 段原文已改变';
+    viewport.scrollTop=0;draw();
+  };
+  draw();
+</script>
+<script src="plaud-transcript-helper.user.js"></script>

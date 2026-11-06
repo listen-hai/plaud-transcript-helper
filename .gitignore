@@ -1,0 +1,8 @@
+# Allowlist: this folder also holds private transcripts, translations and PDFs.
+*
+!.gitignore
+!LICENSE
+!README.md
+!README.zh-CN.md
+!plaud-transcript-helper.user.js
+!plaud-helper-test.html
